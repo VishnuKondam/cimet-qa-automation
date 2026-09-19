@@ -1,0 +1,30 @@
+{
+  "retailer_id": "retailer_1",
+  "agent_id": "agent_a",
+  "call_ts": "2026-03-10T09:00:00",
+  "crm_payload": {
+    "lead_id": "3613790",
+    "account_holder_name": "John Smith",
+    "email": "j.smith@gmial.com",
+    "address": "12 Wattle St, Jaipur",
+    "plan_peak_rate_c_per_kwh": 31.9,
+    "fuel_type": "electricity",
+    "concession": false,
+    "life_support": false
+  },
+  "transcript": [
+    {"speaker": "agent", "text": "Good morning, thanks for calling, my name is Agent A. This call is being recorded for quality and training purposes.", "start_ts": 8.0, "end_ts": 15.0},
+    {"speaker": "customer", "text": "Sure, that's fine.", "start_ts": 15.5, "end_ts": 17.0},
+    {"speaker": "agent", "text": "Can you confirm you are the account holder, John Smith?", "start_ts": 158.0, "end_ts": 162.0},
+    {"speaker": "customer", "text": "Yes, that's me.", "start_ts": 162.5, "end_ts": 164.0},
+    {"speaker": "agent", "text": "Great, before we continue I need to read you the Detailed Money Off statement in full: your discount applies to usage charges only, is conditional on on-time payment, and does not apply to the daily supply charge.", "start_ts": 592.0, "end_ts": 600.0},
+    {"speaker": "customer", "text": "Understood.", "start_ts": 600.5, "end_ts": 602.0},
+    {"speaker": "agent", "text": "So to confirm your new plan, peak is 28.6 cents per kilowatt hour.", "start_ts": 840.0, "end_ts": 844.0},
+    {"speaker": "customer", "text": "Okay, that sounds fine.", "start_ts": 844.5, "end_ts": 846.0},
+    {"speaker": "agent", "text": "Let me just pull up your details on screen.", "start_ts": 1078.0, "end_ts": 1081.0},
+    {"speaker": "agent", "text": "Sorry about that, thanks for your patience. Let's confirm your email on file.", "start_ts": 1128.0, "end_ts": 1132.0},
+    {"speaker": "agent", "text": "I have your email as j.smith@gmail.com, is that correct?", "start_ts": 1328.0, "end_ts": 1332.0},
+    {"speaker": "customer", "text": "Yes, that's correct.", "start_ts": 1332.5, "end_ts": 1334.0},
+    {"speaker": "agent", "text": "Perfect, that's everything we need, thanks for your time today.", "start_ts": 1750.0, "end_ts": 1755.0}
+  ]
+}

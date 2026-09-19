@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CIMET QA Automation — Leads</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up { animation: fade-in-up 0.5s ease-out both; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100 font-sans font-['Inter'] antialiased">
+  <header class="border-b border-slate-700/50 px-8 py-5 flex items-center gap-4 bg-slate-950/80 backdrop-blur-xl">
+    <a href="/evaluate" class="inline-flex items-center gap-1.5 text-sm text-slate-300 hover:text-white transition-colors">
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
+      Back
+    </a>
+    <h1 class="text-xl font-semibold tracking-tight text-white">Leads</h1>
+  </header>
+
+  <section class="grid grid-cols-2 md:grid-cols-4 gap-4 p-8 max-w-6xl mx-auto">
+    <div class="bg-slate-800 border border-slate-700 border-t-2 border-t-blue-500 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      <span class="block text-3xl font-semibold text-white">{{ stats.first_pass_yield_pct }}%</span>
+      <span class="block text-xs text-slate-400 mt-1 uppercase tracking-wider">First-pass yield</span>
+    </div>
+    <div class="bg-slate-800 border border-slate-700 border-t-2 border-t-rose-500 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      <span class="block text-3xl font-semibold text-white">{{ stats.critical_fail_rate_pct }}%</span>
+      <span class="block text-xs text-slate-400 mt-1 uppercase tracking-wider">Critical fail rate</span>
+    </div>
+    <div class="bg-slate-800 border border-slate-700 border-t-2 border-t-teal-500 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      <span class="block text-3xl font-semibold text-white">{{ stats.total_leads }}</span>
+      <span class="block text-xs text-slate-400 mt-1 uppercase tracking-wider">Total leads scored</span>
+    </div>
+    {% if stats.repeat_offender_warning %}
+    <div class="bg-slate-800 border border-slate-700 border-t-2 border-t-rose-500 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      <span class="block text-3xl font-semibold text-rose-400">⚠ {{ stats.repeat_offenders | length }}</span>
+      <span class="block text-xs text-slate-400 mt-1 uppercase tracking-wider">Repeat-offence warning(s)</span>
+    </div>
+    {% endif %}
+  </section>
+
+  {% set auto_count = stats.status_counts.get('AUTO_SUBMIT', 0) %}
+  {% set qa_count = stats.status_counts.get('QA', 0) %}
+  {% set held_count = stats.status_counts.get('HELD', 0) %}
+  {% if stats.total_leads %}
+  <section class="max-w-6xl mx-auto px-8 pb-8 animate-fade-in-up" style="animation-delay: 0.05s">
+    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Compliance &amp; Escalation Funnel</h2>
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+      <div class="text-xs text-slate-400 mb-2">Total calls: {{ stats.total_leads }}</div>
+      <div class="w-full h-8 rounded-full bg-slate-950 overflow-hidden flex border border-slate-700">
+        <div class="h-full bg-gradient-to-r from-blue-600 to-teal-500 flex items-center justify-center text-xs font-medium text-white"
+             style="width: {{ (auto_count / stats.total_leads * 100) | round(1) }}%">{% if auto_count %}{{ auto_count }}{% endif %}</div>
+        <div class="h-full bg-amber-500 flex items-center justify-center text-xs font-medium text-white"
+             style="width: {{ (qa_count / stats.total_leads * 100) | round(1) }}%">{% if qa_count %}{{ qa_count }}{% endif %}</div>
+        <div class="h-full bg-rose-500 flex items-center justify-center text-xs font-medium text-white"
+             style="width: {{ (held_count / stats.total_leads * 100) | round(1) }}%">{% if held_count %}{{ held_count }}{% endif %}</div>
+      </div>
+      <div class="flex flex-wrap gap-4 mt-3 text-xs">
+        <span class="flex items-center gap-1.5 text-slate-300"><span class="h-2 w-2 rounded-full bg-gradient-to-r from-blue-600 to-teal-500"></span>Auto-Submit ({{ auto_count }})</span>
+        <span class="flex items-center gap-1.5 text-slate-300"><span class="h-2 w-2 rounded-full bg-amber-500"></span>QA Review ({{ qa_count }})</span>
+        <span class="flex items-center gap-1.5 text-slate-300"><span class="h-2 w-2 rounded-full bg-rose-500"></span>Held ({{ held_count }})</span>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if stats.failing_checks_breakdown or stats.repeat_offenders %}
+  <section class="max-w-6xl mx-auto px-8 pb-8 animate-fade-in-up" style="animation-delay: 0.1s">
+    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Escalation Matrix</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden shadow-xl">
+        <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+          <span class="text-sm font-semibold text-white">Repeat Offenders — Escalation Risk</span>
+          <span class="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-full px-2 py-0.5">last 7 days</span>
+        </div>
+        {% if stats.repeat_offenders %}
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-slate-950 text-slate-400 uppercase text-xs tracking-wider font-semibold">
+              <th class="py-3 px-6 text-left">Agent</th><th class="py-3 px-6 text-left">Check</th><th class="py-3 px-6 text-left">Fails</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in stats.repeat_offenders %}
+            <tr class="hover:bg-slate-700/50 transition-colors border-b border-slate-700/50 last:border-0">
+              <td class="py-3 px-6 text-slate-300">{{ row.agent_id }}</td>
+              <td class="py-3 px-6 font-mono text-slate-300">{{ row.check_id }}</td>
+              <td class="py-3 px-6 text-slate-300">{{ row.fail_count }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="px-6 py-4 text-sm text-slate-500">No repeat-offence patterns detected.</p>
+        {% endif %}
+      </div>
+
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden shadow-xl">
+        <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+          <span class="text-sm font-semibold text-white">Failing Checks Breakdown</span>
+          <span class="text-xs text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-full px-2 py-0.5">all-time</span>
+        </div>
+        {% if stats.failing_checks_breakdown %}
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-slate-950 text-slate-400 uppercase text-xs tracking-wider font-semibold">
+              <th class="py-3 px-6 text-left">Check</th><th class="py-3 px-6 text-left">Fail count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in stats.failing_checks_breakdown %}
+            <tr class="hover:bg-slate-700/50 transition-colors border-b border-slate-700/50 last:border-0">
+              <td class="py-3 px-6 font-mono text-slate-300">{{ row.check_id }}</td>
+              <td class="py-3 px-6 text-slate-300">{{ row.fail_count }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="px-6 py-4 text-sm text-slate-500">No failing checks recorded.</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="max-w-6xl mx-auto px-8 pb-8 animate-fade-in-up" style="animation-delay: 0.15s">
+    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Analytics Overview</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6">
+        <h3 class="text-sm font-semibold text-white mb-4">Global Compliance Health</h3>
+        <div class="relative h-56">
+          <canvas id="complianceDoughnut"></canvas>
+          <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <span class="text-2xl font-bold text-white">88%</span>
+            <span class="text-[10px] text-slate-400 uppercase tracking-wider">Pass rate</span>
+          </div>
+        </div>
+      </div>
+      <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6">
+        <h3 class="text-sm font-semibold text-white mb-4">Top Risk Areas</h3>
+        <div class="relative h-56">
+          <canvas id="riskBarChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="max-w-6xl mx-auto px-8 pb-8">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Recent Leads</h2>
+      <div class="relative w-64">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+        <input id="lead-search" type="text" placeholder="Search by ID or retailer&hellip;" oninput="filterLeads()"
+          class="w-full bg-slate-800 border border-slate-700 rounded-full pl-9 pr-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-teal-500/50" />
+      </div>
+    </div>
+
+    <div class="flex gap-1 mb-4 border-b border-slate-700">
+      <button type="button" class="status-tab px-4 py-2 text-sm font-medium border-b-2 border-white text-white transition-colors"
+        data-status="ALL" data-active-classes="border-white text-white" data-inactive-classes="border-transparent text-slate-400 hover:text-white"
+        onclick="setStatusFilter('ALL')">All Leads</button>
+      <button type="button" class="status-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-teal-300 transition-colors"
+        data-status="AUTO_SUBMIT" data-active-classes="border-teal-400 text-teal-300" data-inactive-classes="border-transparent text-slate-400 hover:text-teal-300"
+        onclick="setStatusFilter('AUTO_SUBMIT')">Auto-Submit (Pass)</button>
+      <button type="button" class="status-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-amber-300 transition-colors"
+        data-status="QA" data-active-classes="border-amber-400 text-amber-300" data-inactive-classes="border-transparent text-slate-400 hover:text-amber-300"
+        onclick="setStatusFilter('QA')">Manual QA Queue</button>
+      <button type="button" class="status-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-rose-300 transition-colors"
+        data-status="HELD" data-active-classes="border-rose-400 text-rose-300" data-inactive-classes="border-transparent text-slate-400 hover:text-rose-300"
+        onclick="setStatusFilter('HELD')">Held / Escalated</button>
+    </div>
+
+    <div id="leads-list" class="flex flex-col gap-2">
+      {% for lead in leads %}
+      <a class="lead-row flex gap-4 items-center px-5 py-4 bg-slate-800 border border-slate-700 rounded-2xl no-underline text-slate-100 hover:bg-slate-700/50 transition-colors cursor-pointer
+                {% if lead.status == 'HELD' %}border-l-2 border-l-rose-500{% elif lead.status == 'AUTO_SUBMIT' %}border-l-2 border-l-emerald-500{% elif lead.status == 'QA' %}border-l-2 border-l-amber-500{% endif %}"
+         href="/leads/{{ lead.id }}" data-status="{{ lead.status }}" data-search="{{ (lead.id ~ ' ' ~ lead.retailer_id ~ ' ' ~ lead.status) | lower }}">
+        <span class="font-mono text-sm text-slate-400">{{ lead.id }}</span>
+        <span class="text-sm text-slate-400">{{ lead.retailer_id }}</span>
+        <span class="ml-auto text-sm font-medium px-3 py-1 rounded-full
+          {% if lead.status == 'HELD' %}bg-rose-500/10 text-rose-400 border border-rose-500/20
+          {% elif lead.status == 'AUTO_SUBMIT' %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20
+          {% elif lead.status == 'QA' %}bg-amber-500/10 text-amber-400 border border-amber-500/20
+          {% else %}bg-slate-700 text-slate-400 border border-slate-600{% endif %}">{{ lead.status }}</span>
+      </a>
+      {% else %}
+      <p class="text-slate-500 text-sm">No leads processed yet. POST to /api/leads/{id}/process to ingest one.</p>
+      {% endfor %}
+    </div>
+    <p id="no-results" class="hidden text-slate-500 text-sm px-1 mt-2">No leads match your search.</p>
+  </main>
+
+  <script>
+    new Chart(document.getElementById('complianceDoughnut'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Pass', 'Fail'],
+        datasets: [{
+          data: [88, 12],
+          backgroundColor: ['#2dd4bf', '#f43f5e'],
+          borderColor: '#1e293b',
+          borderWidth: 2,
+        }],
+      },
+      options: {
+        cutout: '72%',
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 11 }, boxWidth: 10 } },
+        },
+      },
+    });
+
+    new Chart(document.getElementById('riskBarChart'), {
+      type: 'bar',
+      data: {
+        labels: ['dmo_verbatim', 'rates_and_charges', 'recording_disclaimer', 'email_captured'],
+        datasets: [{
+          label: 'Fail count',
+          data: [14, 11, 8, 5],
+          backgroundColor: '#3b82f6',
+          borderRadius: 6,
+        }],
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
+          y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148, 163, 184, 0.1)' }, beginAtZero: true },
+        },
+      },
+    });
+
+    function filterLeads() {
+      const term = document.getElementById('lead-search').value.trim().toLowerCase();
+      const rows = document.querySelectorAll('#leads-list .lead-row');
+      let visibleCount = 0;
+      rows.forEach((row) => {
+        const matchesSearch = row.dataset.search.includes(term);
+        const matchesStatus = activeStatusFilter === 'ALL' || row.dataset.status === activeStatusFilter;
+        const match = matchesSearch && matchesStatus;
+        row.style.display = match ? '' : 'none';
+        if (match) visibleCount += 1;
+      });
+      const noResults = document.getElementById('no-results');
+      if (noResults) noResults.classList.toggle('hidden', visibleCount !== 0 || rows.length === 0);
+    }
+
+    let activeStatusFilter = 'ALL';
+
+    function setStatusFilter(status) {
+      activeStatusFilter = status;
+      document.querySelectorAll('.status-tab').forEach((tab) => {
+        const isActive = tab.dataset.status === status;
+        tab.classList.remove(...tab.dataset.activeClasses.split(' '), ...tab.dataset.inactiveClasses.split(' '));
+        tab.classList.add(...(isActive ? tab.dataset.activeClasses : tab.dataset.inactiveClasses).split(' '));
+      });
+      filterLeads();
+    }
+  </script>
+</body>
+</html>

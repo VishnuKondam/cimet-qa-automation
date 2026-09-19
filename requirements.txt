@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pydantic
+openai
+instructor
+jinja2
+python-multipart
+aiosqlite
+deepgram-sdk

@@ -1,0 +1,27 @@
+{
+  "retailer_id": "retailer_1",
+  "agent_id": "agent_a",
+  "call_ts": "2026-03-10T09:00:00",
+  "crm_payload": {
+    "lead_id": "9900001",
+    "account_holder_name": "John Smith",
+    "email": "j.smith@gmial.com",
+    "address": "12 Wattle St, Jaipur",
+    "plan_peak_rate_c_per_kwh": 31.9,
+    "fuel_type": "electricity",
+    "concession": false,
+    "life_support": false
+  },
+  "transcript": [
+    {"speaker": "AGENT", "text": "Hi, this is Agent A. Before we start, I need to let you know this call is recorded for QA purposes, is that okay?", "start_ts": 10.0, "end_ts": 14.5},
+    {"speaker": "CUSTOMER", "text": "Yeah, yeah, whatever, just go ahead.", "start_ts": 14.5, "end_ts": 16.0},
+    {"speaker": "AGENT", "text": "Great. So your address is 123 Main Street and the account holder is John Smith, right?", "start_ts": 160.0, "end_ts": 165.0},
+    {"speaker": "CUSTOMER", "text": "Yep, that's me.", "start_ts": 165.0, "end_ts": 166.5},
+    {"speaker": "AGENT", "text": "Okay, let's go over the rates. The peak rate for this plan is... give me one second... alright, the peak is twenty-eight point six cents per kilowatt hour.", "start_ts": 840.0, "end_ts": 850.5},
+    {"speaker": "CUSTOMER", "text": "Wait, twenty-eight point six? Not thirty?", "start_ts": 851.0, "end_ts": 853.0},
+    {"speaker": "AGENT", "text": "Correct, twenty-eight point six cents.", "start_ts": 853.0, "end_ts": 855.0},
+    {"speaker": "AGENT", "text": "And for the contract, I need to read the Default Market Offer verbatim. The DMO for your area is... [reads DMO verbatim].", "start_ts": 1150.0, "end_ts": 1165.0},
+    {"speaker": "AGENT", "text": "Finally, let's confirm your email. I have j dot smith at g m a i l dot com. Is that right?", "start_ts": 1325.0, "end_ts": 1332.0},
+    {"speaker": "CUSTOMER", "text": "Yes, j.smith@gmail.com.", "start_ts": 1332.0, "end_ts": 1335.0}
+  ]
+}

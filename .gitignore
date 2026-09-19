@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+data/*.db
+data/audio/
+.DS_Store
+
+# Personal/reference docs, not part of the shippable app
+hackathon_checklist.md
+QA-Automation-Handout.pdf
+call-transcript-redacted.pdf

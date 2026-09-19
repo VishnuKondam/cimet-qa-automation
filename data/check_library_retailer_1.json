@@ -1,0 +1,52 @@
+[
+  {
+    "id": "recording_disclaimer",
+    "check_type": "verbatim",
+    "description": "Recording disclaimer read verbatim before proceeding",
+    "script_text": "This call is being recorded for quality and training purposes.",
+    "is_critical": true,
+    "weight": 15,
+    "effective_from": "2026-01-01"
+  },
+  {
+    "id": "account_holder_confirmed",
+    "check_type": "factual",
+    "description": "Account holder identity confirmed against CRM record",
+    "is_critical": true,
+    "weight": 10,
+    "effective_from": "2026-01-01"
+  },
+  {
+    "id": "dmo_verbatim",
+    "check_type": "verbatim",
+    "description": "DMO (Detailed Money Off) statement read verbatim",
+    "script_text": "Your discount applies to usage charges only, is conditional on on-time payment, and does not apply to the daily supply charge.",
+    "is_critical": true,
+    "weight": 15,
+    "effective_from": "2026-01-01"
+  },
+  {
+    "id": "rates_and_charges",
+    "check_type": "factual",
+    "description": "Rate quoted verbally matches the plan attached to the lead",
+    "is_critical": true,
+    "weight": 20,
+    "effective_from": "2026-01-01"
+  },
+  {
+    "id": "email_captured",
+    "check_type": "factual",
+    "description": "Email read back by agent matches CRM field exactly",
+    "is_critical": true,
+    "weight": 10,
+    "effective_from": "2026-01-01"
+  },
+  {
+    "id": "dead_air",
+    "check_type": "behaviour",
+    "description": "No dead air greater than 10 seconds",
+    "is_critical": false,
+    "weight": 5,
+    "effective_from": "2026-01-01"
+  }
+]

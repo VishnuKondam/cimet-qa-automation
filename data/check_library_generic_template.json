@@ -1,0 +1,43 @@
+[
+  {
+    "id": "recording_disclaimer",
+    "check_type": "verbatim",
+    "description": "Recording disclaimer read verbatim before proceeding",
+    "script_text": "This call is being recorded for quality and training purposes.",
+    "is_critical": true,
+    "weight": 15,
+    "effective_from": "2026-01-01"
+  },
+  {
+    "id": "identity_verification",
+    "check_type": "factual",
+    "description": "Customer identity confirmed against CRM record before any account or offer details are discussed",
+    "is_critical": true,
+    "weight": 15,
+    "effective_from": "2026-01-01"
+  },
+  {
+    "id": "pricing_disclosure",
+    "check_type": "factual",
+    "description": "Agent must clearly state the promotional price, regular price, and any contract terms associated with the offer",
+    "is_critical": true,
+    "weight": 20,
+    "effective_from": "2026-01-01"
+  },
+  {
+    "id": "pci_compliance",
+    "check_type": "verbatim",
+    "description": "Agent must explicitly state they are muting or pausing the recording before collecting payment card details",
+    "is_critical": true,
+    "weight": 20,
+    "effective_from": "2026-01-01"
+  },
+  {
+    "id": "email_captured",
+    "check_type": "factual",
+    "description": "Email read back by agent matches CRM field exactly",
+    "is_critical": true,
+    "weight": 10,
+    "effective_from": "2026-01-01"
+  }
+]
