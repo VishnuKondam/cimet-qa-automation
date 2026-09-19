@@ -122,6 +122,7 @@ async def run_llm_checks(
     checks: list[dict],
     transcript: list[dict],
     crm_payload: dict,
+    use_llm: bool = True,
 ) -> list[CheckResult]:
     """Type A (verbatim/script) and Type B (factual match) checks via instructor + LLM."""
     if not checks:
@@ -142,6 +143,16 @@ async def run_llm_checks(
         for c in factual_checks
     ]
     if not remaining_checks:
+        return results
+
+    if not use_llm:
+        results.extend(
+            CheckResult(
+                check_id=c["id"], status=LOW_CONFIDENCE_STATUS,
+                reasoning="LLM fallback disabled by operator; routed to human QA rather than auto-passed.",
+            )
+            for c in remaining_checks
+        )
         return results
 
     if not os.environ.get("OPENAI_API_KEY"):

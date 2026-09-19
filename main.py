@@ -199,13 +199,22 @@ async def dashboard_stats():
 
 
 @app.post("/api/evaluate-audio")
-async def evaluate_audio(file: UploadFile = File(...), crm_payload: str = Form("{}"), lead_name: str = Form("")):
+async def evaluate_audio(
+    file: UploadFile = File(...),
+    crm_payload: str = Form("{}"),
+    lead_name: str = Form(""),
+    stt_model: str = Form("nova-3"),
+    use_llm_fallback: str = Form("true"),
+):
     """Demo-only path: transcribe an uploaded call recording via Deepgram, then run it
     through the same dynamic check-library evaluator used by /api/leads/{id}/process.
     """
     api_key = os.environ.get("DEEPGRAM_API_KEY")
     if not api_key:
         raise HTTPException(status_code=503, detail="DEEPGRAM_API_KEY not configured")
+
+    stt_model = stt_model if stt_model in ("nova-3", "nova-2") else "nova-3"
+    use_llm = use_llm_fallback.strip().lower() != "false"
 
     try:
         crm_payload_dict = json.loads(crm_payload) if crm_payload else {}
@@ -218,7 +227,7 @@ async def evaluate_audio(file: UploadFile = File(...), crm_payload: str = Form("
         response = await asyncio.to_thread(
             client.listen.v1.media.transcribe_file,
             request=audio_bytes,
-            model="nova-3",
+            model=stt_model,
             smart_format=False,
             diarize=True,
             utterances=True,
@@ -253,7 +262,7 @@ async def evaluate_audio(file: UploadFile = File(...), crm_payload: str = Form("
     llm_checks = [c for c in active_checks if c["check_type"] != "behaviour"]
 
     behaviour_results = behaviour_checks(transcript_dicts, behaviour_ids)
-    llm_results = await run_llm_checks(llm_checks, transcript_dicts, crm_payload_dict)
+    llm_results = await run_llm_checks(llm_checks, transcript_dicts, crm_payload_dict, use_llm=use_llm)
 
     evaluations = []
     for r in [*behaviour_results, *llm_results]:
